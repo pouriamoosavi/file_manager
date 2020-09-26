@@ -63,3 +63,5 @@ typings/
 .vscode/
 
 nodemon.json
+
+config.js
