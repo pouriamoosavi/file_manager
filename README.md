@@ -12,13 +12,19 @@ Clone project. Create a `config.js` file in the root of project and paste follow
 module.exports = {
   port: YOUR_DESIRED_PORT,
   root: 'WHERE_FILE_MANAGER_CONSIDER_AS_ROOT',
+  sessionSecret: 'SOME_RANDOM_STRING'
 }
 ```
+Change `YOUR_PORT` (e.g: 8081), `WHERE_FILE_MANAGER_CONSIDER_AS_ROOT` (e.g: /home/foo/Desktop) and `SOME_RANDOM_STRING` (e.g: secret).<br>
 Install modules by runing `npm i`<br>
-Change `YOUR_PORT` (e.g: 8081) and `WHERE_FILE_MANAGER_CONSIDER_AS_ROOT` (e.g: /home/foo/Desktop) with what you want.<br>
 Run the project with `npm run start`
 
-
+## TODO
+- Button to download hole folder.
+- Upload files and folders
+- Favorite folders and show them in left panel
+- Download multiple files
+- Delete and move files
 
 
 
