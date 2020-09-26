@@ -20,11 +20,12 @@ Install modules by runing `npm i`<br>
 Run the project with `npm run start`
 
 ## TODO
-- Button to download hole folder.
+- Button to download whole folder.
 - Upload files and folders
 - Favorite folders and show them in left panel
 - Download multiple files
 - Delete and move files
+- Sort files based on different things
 
 
 
