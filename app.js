@@ -2,8 +2,11 @@
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const redis = require('redis');
+const redisClient = redis.createClient();
+const redisStore = require('connect-redis')(session);
 const bodyParser = require('body-parser');
 
 // Add config to global.global
@@ -27,10 +30,16 @@ const policy = require('./policy');
 const app = express();
 
 // Add session for login
+redisClient.on('error', (err) => {
+  console.log('Redis error: ', err);
+});
 app.use(session({
-	secret: global.appConfig.sessionSecret,
-	resave: true,
-	saveUninitialized: true
+  secret: global.appConfig.sessionSecret,
+  name: 'fmauth',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }, // Note that the cookie-parser module is no longer needed
+  store: new redisStore({ host: 'localhost', port: 6379, client: redisClient, ttl: 86400 }),
 }));
 
 // view engine setup
@@ -40,15 +49,15 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/u', userRouter);
 app.use(policy)
 app.use('/b', fileRouter);
-app.use('/', function(req, res, next) {
-  return res.redirect('/b');
-})
+// app.use('/', function(req, res, next) {
+//   return res.redirect('/b');
+// })
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
