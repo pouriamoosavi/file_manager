@@ -65,3 +65,5 @@ typings/
 nodemon.json
 
 config.js
+
+db.json

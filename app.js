@@ -1,11 +1,37 @@
+// Modules
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const bodyParser = require('body-parser');
 
+// Add config to global.global
+const config = require('./config');
+global.appConfig = config;
+
+// Add lowdb as database to global.global
+const lowdb = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+const adapter = new FileSync('./db.json');
+global.appDB = lowdb(adapter);
+global.appDB.defaults({ users: [{username: 'admin', password: '$2a$10$SjPAMA9Ls/f0cM9e0aPGReZpmcmloptwWushd1Z9yW2iPGBAulmRi'}] }).write()
+
+// Routers
 const fileRouter = require('./routes/file');
+const userRouter = require('./routes/user');
+
+// Policies
+const policy = require('./policy');
 
 const app = express();
+
+// Add session for login
+app.use(session({
+	secret: global.appConfig.sessionSecret,
+	resave: true,
+	saveUninitialized: true
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -13,10 +39,16 @@ app.set('view engine', 'ejs');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/u', userRouter);
+app.use(policy)
 app.use('/b', fileRouter);
+app.use('/', function(req, res, next) {
+  return res.redirect('/b');
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

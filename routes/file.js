@@ -7,12 +7,12 @@ const mime = require("mime-types");
 router.get("*", async function (req, res, next) {
   try {
     let relativePath = req.url
-    let absolutePath = config.root + relativePath;
+    let absolutePath = global.appConfig.root + relativePath;
     absolutePath = decodeURI(absolutePath);
     if (!fs.existsSync(absolutePath)) {
       return next(createError(404));
     }
-    console.log(betterUrlJoin('/web/thomas', 'var'))
+    console.log(res.locals.clientUser)
     let fileStat = fs.lstatSync(absolutePath);
     let isDir = fileStat.isDirectory();
     if (isDir) {
